@@ -3,7 +3,6 @@ import random
 from datetime import datetime, timezone
 from extensions import db, bcrypt
 
-
 STYLISH_NAMES = [
     "Shadow", "Phantom", "Neon", "Cyber", "Glitch", "Blaze",
     "Storm", "Rogue", "Frost", "Venom", "Inferno", "Spectre"
@@ -29,7 +28,8 @@ class User(db.Document):
     def check_password(self, password):
         """ Checks if password matches the stored hash """
         return bcrypt.check_password_hash(self.password_hash, password)
-    
+
+
     @staticmethod
     def generate_unique_anonymous_username():
         """Generate a unique, stylish anonymous username"""
@@ -53,19 +53,14 @@ class User(db.Document):
         """Return a dictionary representation of the user, respecting anonymity"""
         user_data = {
             "id": str(self.id),
-            "username": self.anonymous_name if self.be_anonymous else self.username,
+            "username": self.username,
             "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             "updated_at": self.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
             "last_login": self.last_login.strftime('%Y-%m-%d %H:%M:%S') if self.last_login else None,
+            "email": self.email,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
         }
-
-        # Show extra details only if user is NOT anonymous
-        if not self.be_anonymous:
-            user_data.update({
-                "email": self.email,
-                "first_name": self.first_name,
-                "last_name": self.last_name,
-            })
 
         return user_data
 

@@ -1,1 +1,17 @@
-./todoenv/**
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Virtual Environment
+todovenv/
+env/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore test logs
+*.log
+
