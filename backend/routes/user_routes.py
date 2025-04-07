@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timezone
 from models.User import User
-
+from models.Project import Project
 user_bp = Blueprint("user_routes", __name__)  # Define Blueprint
 
 @user_bp.route("/register", methods=["POST"])
@@ -37,7 +37,18 @@ def register():
 
         # Save to database
         user.save()
+
         print(f"User {user.username} registered successfully.")
+        # Create a default project for the user
+        default_project = Project(
+            project_name="Backlog",
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc),
+            visibility="private",
+            user_id=str(user.id)
+        )
+        default_project.save()
+        print(f"Default project 'Backlog' created for user {user.username}.")
         return jsonify({"message": "User registered successfully", "user": user.to_json()}), 201
 
     except Exception as e:

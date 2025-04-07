@@ -19,8 +19,10 @@ setup_jwt(app)
 # Import and register Blueprints after db is initialized
 from routes.user_routes import user_bp 
 from routes.auth_routes import auth_bp   
+from routes.project_routes import project_bp
 app.register_blueprint(user_bp, url_prefix="/api/users")  
 app.register_blueprint(auth_bp, url_prefix="/api/auth")
+app.register_blueprint(project_bp, url_prefix="/api/projects")
 # Run the app
 if __name__ == "__main__":
     app.run(debug=True)
