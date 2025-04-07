@@ -37,7 +37,7 @@ def register():
 
         # Save to database
         user.save()
-
+        print(f"User {user.username} registered successfully.")
         return jsonify({"message": "User registered successfully", "user": user.to_json()}), 201
 
     except Exception as e:

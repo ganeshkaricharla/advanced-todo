@@ -6,12 +6,10 @@ from flask_jwt_extended import (
 from token_blacklist import blacklisted_tokens
 from datetime import datetime, timedelta
 from models.User import User
-from app import app
+from flask import current_app 
+auth_bp = Blueprint('auth_routes', __name__)
 
-
-user_bp = Blueprint('auth_routes', __name__)
-
-@user_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     """Authenticate user and return JWT tokens"""
     data = request.get_json()
@@ -19,7 +17,7 @@ def login():
     if "username" not in data or "password" not in data:
         return jsonify({"error": "Username and password are required"}), 400
 
-    user = User.objects(email=data["username"]).first()
+    user = User.objects(username=data["username"]).first()
     if not user or not user.check_password(data["password"]):
         return jsonify({"error": "Invalid username or password"}), 401
 
@@ -27,8 +25,8 @@ def login():
     user.update(last_login=datetime.utcnow())
 
     # Generate access and refresh tokens
-    access_token = create_access_token(identity=str(user.id), expires_delta=app.config["JWT_ACCESS_TOKEN_EXPIRES"])
-    refresh_token = create_refresh_token(identity=str(user.id), expires_delta=app.config["JWT_REFRESH_TOKEN_EXPIRES"])
+    access_token = create_access_token(identity=str(user.id), expires_delta=current_app.config["JWT_ACCESS_TOKEN_EXPIRES"])
+    refresh_token = create_refresh_token(identity=str(user.id), expires_delta=current_app.config["JWT_REFRESH_TOKEN_EXPIRES"])
 
     return jsonify({
         "access_token": access_token,
@@ -38,7 +36,7 @@ def login():
 
 
 
-@auth_routes.route('/logout', methods=['POST'])
+@auth_bp.route('/logout', methods=['POST'])
 @jwt_required()
 def logout():
     """Invalidate the current token (logout)"""
@@ -48,7 +46,7 @@ def logout():
     return jsonify({"message": "Logged out successfully!"}), 200
 
 
-@auth_routes.route('/refresh', methods=['POST'])
+@auth_bp.route('/refresh', methods=['POST'])
 @jwt_required(refresh=True)
 def refresh():
     """Generate a new access token using a refresh token"""
@@ -60,7 +58,7 @@ def refresh():
         "message": "Access token refreshed successfully"
     }), 200
 
-@auth_routes.route('/profile', methods=['GET'])
+@auth_bp.route('/profile', methods=['GET'])
 @jwt_required()
 def get_current_user():
     """Get details of the logged-in user"""
