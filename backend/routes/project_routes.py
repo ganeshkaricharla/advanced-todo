@@ -19,7 +19,7 @@ def create_project():
         data["user_id"] = user_id
 
         # Validate required fields
-        required_fields = ["project_name", "user_id","visibility"]
+        required_fields = ["project_name", "user_id"]
         if not all(field in data for field in required_fields):
             return jsonify({"error": "Missing required fields"}), 400
 

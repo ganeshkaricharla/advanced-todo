@@ -1,5 +1,49 @@
 # Advanced Todo
 
+# DB Diagram
+
+```mermaid
+erDiagram
+    USERS {
+        ObjectId _id PK
+        string username
+        string password_hash
+        string email
+        datetime created_at
+        datetime last_login
+    }
+
+    PROJECTS {
+        ObjectId _id PK
+        string project_name
+        string description
+        ObjectId user_id FK
+        datetime created_at
+        datetime updated_at
+        string visibility
+        boolean is_default
+        string project_type
+    }
+
+    TASKS {
+        ObjectId _id PK
+        string title
+        string description
+        ObjectId project_id FK
+        ObjectId user_id FK
+        datetime start_date
+        datetime end_date
+        string status
+        datetime created_at
+        datetime updated_at
+        object metadata
+    }
+
+    USERS ||--o{ PROJECTS : creates
+    USERS ||--o{ TASKS : owns
+    PROJECTS ||--o{ TASKS : contains
+```
+
 ```mermaid
 graph TB
 subgraph "Backend (Flask)"
